@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/boltdb/bolt"
 	"github.com/gorilla/mux"
 )
 
@@ -17,25 +16,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func RecipesIndex(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	// w.WriteHeader(http.StatusOK)
-	// var recipes []*Recipe
-	db.View(func(tx *bolt.Tx) error {
-		c := tx.Bucket([]byte("book")).Cursor()
-		if c == nil {
-			fmt.Fprintln(w, "add recipe using curl")
-			return nil
-		}
-		for k, v := c.First(); k != nil; k, v = c.Next() {
-			recipe, _ := decode(v)
-			// recipes = append(recipes, recipe)
-			fmt.Fprintln(w, "Recipe:", recipe.Name)
-		}
-		// if err := json.NewEncoder(w).Encode(recipes); err != nil {
-		// 	panic(err)
-		// }
-		return nil
-	})
+	// fmt.Fprintln(w, "Welcome to Recipe Book!")
+	recipes := List()
+	for _, recipe := range recipes {
+		fmt.Fprintln(w, "Recipe: ", recipe.Name, recipe.Id)
+	}
 }
 
 func RecipeGet(w http.ResponseWriter, r *http.Request) {

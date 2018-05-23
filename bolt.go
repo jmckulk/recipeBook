@@ -89,3 +89,18 @@ func GetRecipe(id string) (*Recipe, error) {
 	})
 	return r, err
 }
+
+func List() []Recipe {
+	var recipes []Recipe
+	db.View(func(tx *bolt.Tx) error {
+		// log.Println("view/cursor")
+		c := tx.Bucket([]byte("book")).Cursor()
+		// log.Println("cursor", c)
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			recipe, _ := decode(v)
+			recipes = append(recipes, *recipe)
+		}
+		return nil
+	})
+	return recipes
+}
