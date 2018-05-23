@@ -12,11 +12,14 @@ import (
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, "Welcome to Recipe Book!")
 }
 
 func RecipesIndex(w http.ResponseWriter, r *http.Request) {
-	// fmt.Fprintln(w, "Welcome to Recipe Book!")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 	recipes := List()
 	for _, recipe := range recipes {
 		fmt.Fprintln(w, "Recipe: ", recipe.Name, recipe.Id)
@@ -24,6 +27,8 @@ func RecipesIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func RecipeGet(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 	vars := mux.Vars(r)
 	id := vars["recipeId"]
 	recipe, _ := GetRecipe(id)
