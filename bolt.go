@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -49,9 +48,7 @@ func (r *Recipe) AddRecipe() error {
 			log.Println("Update db: encode recipe")
 			panic(err)
 		}
-		id, _ := book.NextSequence()
-		r.Id = int(id)
-		err = book.Put(itob(r.Id), enc)
+		err = book.Put([]byte(r.Id), enc)
 		return err
 	})
 	return err
@@ -91,10 +88,4 @@ func GetRecipe(id string) (*Recipe, error) {
 		return nil
 	})
 	return r, err
-}
-
-func itob(v int) []byte {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, uint64(v))
-	return b
 }
