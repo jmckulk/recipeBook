@@ -27,15 +27,15 @@ var routes = Routes{
 		RecipesIndex,
 	},
 	Route{
-		"RecipesGet",
-		"GET",
-		"/recipes/{recipeId}",
-		RecipeGet,
-	},
-	Route{
 		"RecipesCreate",
 		"POST",
 		"/recipes",
 		RecipeCreate,
+	},
+	Route{
+		"RecipesDelete",
+		"POST",
+		"/recipes",
+		RecipeDelete,
 	},
 }

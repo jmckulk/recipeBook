@@ -40,15 +40,13 @@ func (r *Recipe) AddRecipe() error {
 	err := db.Update(func(tx *bolt.Tx) error {
 		book, err := tx.CreateBucketIfNotExists([]byte("book"))
 		if err != nil {
-			log.Println("Update db: create bucket")
-			panic(err)
+			log.Fatal(err)
 		}
 		enc, err := r.encode()
 		if err != nil {
-			log.Println("Update db: encode recipe")
-			panic(err)
+			log.Fatal(err)
 		}
-		err = book.Put([]byte(r.Id), enc)
+		err = book.Put([]byte(r.Name), enc)
 		return err
 	})
 	return err
@@ -56,8 +54,7 @@ func (r *Recipe) AddRecipe() error {
 
 func (r *Recipe) encode() ([]byte, error) {
 	if enc, err := json.Marshal(r); err != nil {
-		log.Println("encode")
-		panic(err)
+		log.Fatal(err)
 	} else {
 		return enc, nil
 	}
@@ -93,9 +90,7 @@ func GetRecipe(id string) (*Recipe, error) {
 func List() []Recipe {
 	var recipes []Recipe
 	db.View(func(tx *bolt.Tx) error {
-		// log.Println("view/cursor")
 		c := tx.Bucket([]byte("book")).Cursor()
-		// log.Println("cursor", c)
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			recipe, _ := decode(v)
 			recipes = append(recipes, *recipe)
@@ -103,4 +98,14 @@ func List() []Recipe {
 		return nil
 	})
 	return recipes
+}
+
+func DeleteRecipe(id string) error {
+	err := db.Update(func(tx *bolt.Tx) error {
+		return tx.Bucket([]byte("book")]).Delete([]byte(id))
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	return nil
 }
