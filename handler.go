@@ -19,8 +19,12 @@ func RecipesIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	recipes := List()
-	for _, recipe := range recipes {
-		fmt.Fprintln(w, "Recipe: ", recipe.Name, "\tCook Time: ", recipe.CookTime)
+	if recipes == nil {
+		fmt.Fprintln(w, "Recipe book is empty.")
+	} else {
+		for _, recipe := range recipes {
+			fmt.Fprintln(w, "Recipe: ", recipe.Name, "\tCook Time: ", recipe.CookTime)
+		}
 	}
 }
 
