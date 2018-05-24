@@ -20,7 +20,7 @@ func RecipesIndex(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	recipes := List()
 	for _, recipe := range recipes {
-		fmt.Fprintln(w, "Recipe: ", recipe.Name)
+		fmt.Fprintln(w, "Recipe: ", recipe.Name, "\tCook Time: ", recipe.CookTime)
 	}
 }
 

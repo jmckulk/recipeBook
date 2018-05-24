@@ -9,7 +9,7 @@ import (
 
 func main() {
 	Open()
-	// r := &Recipe{Name: "Pork", Id: "0"}
+	// r := &Recipe{Name: "Pork", CookTime: "30 min"}
 	// r.AddRecipe()
 	router := NewRouter()
 
