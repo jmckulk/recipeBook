@@ -29,13 +29,13 @@ var routes = Routes{
 	Route{
 		"RecipesCreate",
 		"POST",
-		"/recipes",
+		"/recipes/create",
 		RecipeCreate,
 	},
 	Route{
 		"RecipesDelete",
 		"POST",
-		"/recipes",
+		"/recipes/delete",
 		RecipeDelete,
 	},
 }
