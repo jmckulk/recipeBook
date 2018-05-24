@@ -68,5 +68,7 @@ func RecipeDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, recipe)
-	recipe.DeleteRecipe(recipe)
+	if err := DeleteRecipe(recipe.Name); err != nil {
+		log.Fatal(err)
+	}
 }

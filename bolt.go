@@ -53,11 +53,11 @@ func (r *Recipe) AddRecipe() error {
 }
 
 func (r *Recipe) encode() ([]byte, error) {
-	if enc, err := json.Marshal(r); err != nil {
+	enc, err := json.Marshal(r)
+	if err != nil {
 		log.Fatal(err)
-	} else {
-		return enc, nil
 	}
+	return enc, nil
 }
 
 func decode(data []byte) (*Recipe, error) {
@@ -102,7 +102,7 @@ func List() []Recipe {
 
 func DeleteRecipe(id string) error {
 	err := db.Update(func(tx *bolt.Tx) error {
-		return tx.Bucket([]byte("book")]).Delete([]byte(id))
+		return tx.Bucket([]byte("book")).Delete([]byte(id))
 	})
 	if err != nil {
 		log.Fatal(err)
