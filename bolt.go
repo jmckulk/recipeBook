@@ -102,8 +102,9 @@ func UpdateTime(id, time string) error {
 		var err error
 		book := tx.Bucket([]byte("book"))
 		recipe, err := decode(book.Get([]byte(id)))
-		if recipe == nil {
+		if recipe == nil || err != nil {
 			log.Println("Unable to Update Time. Recipe not in book")
+			return err
 		} else {
 			recipe.CookTime = time
 			newRecipe, err := recipe.encode()

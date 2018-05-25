@@ -38,10 +38,10 @@ var routes = Routes{
 		"/recipes/delete",
 		RecipeDelete,
 	},
-	// Route{
-	// 	"RecipesUpdateTime",
-	// 	"POST",
-	// 	"/recipes/update/time",
-	// 	RecipeUpdateTime,
-	// },
+	Route{
+		"RecipesUpdateTime",
+		"POST",
+		"/recipes/update/time",
+		UpdateRecipeTime,
+	},
 }

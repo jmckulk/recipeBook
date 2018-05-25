@@ -76,3 +76,32 @@ func RecipeDelete(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 }
+
+func UpdateRecipeTime(w http.ResponseWriter, r *http.Request) {
+	var recipe *Recipe
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := r.Body.Close(); err != nil {
+		log.Fatal(err)
+	}
+	recipe, err = decode(body)
+	if recipe.CookTime == "" || recipe.Name == "" {
+		log.Println("Need a time and recipe name to update recipe.")
+	} else {
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(422) // unprocessable entity
+			if err := json.NewEncoder(w).Encode(err); err != nil {
+				log.Fatal(err)
+			}
+		}
+		err = UpdateTime(recipe.Name, recipe.CookTime)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
