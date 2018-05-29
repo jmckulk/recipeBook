@@ -18,16 +18,24 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func RecipesIndex(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	// w.WriteHeader(http.StatusOK)
 	recipes := List()
-	if recipes == nil {
-		fmt.Fprintln(w, "Recipe book is empty.")
-	} else {
-		for _, recipe := range recipes {
-			fmt.Fprintln(w, "Recipe: ", recipe.Name, "\tCook Time: ", recipe.CookTime, "\tIngredients: ", recipe.IngredientList)
-		}
+	recipeBook := struct {
+		Book string
+		List Recipes
+	}{
+		Book: "Recipe List",
+		List: recipes,
 	}
+	listT.Execute(w, recipeBook)
+	// if recipes == nil {
+	// 	fmt.Fprintln(w, "Recipe book is empty.")
+	// } else {
+	// 	for _, recipe := range recipes {
+	// 		fmt.Fprintln(w, "Recipe: ", recipe.Name, "\tCook Time: ", recipe.CookTime, "\tIngredients: ", recipe.IngredientList)
+	// 	}
+	// }
 }
 
 func RecipeCreate(w http.ResponseWriter, r *http.Request) {

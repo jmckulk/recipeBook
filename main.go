@@ -8,10 +8,11 @@ import (
 
 // var db *bolt.DB
 var t *template.Template
+var check func(error)
 
 func main() {
 	var err error
-	check := func(err error) {
+	check = func(err error) {
 		if err != nil {
 			log.Fatal(err)
 		}
