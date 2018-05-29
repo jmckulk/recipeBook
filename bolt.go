@@ -20,10 +20,7 @@ func Open() error {
 	dbfile := path.Join(path.Dir(filename), "RecipeBook.db")
 	config := &bolt.Options{Timeout: 1 * time.Second}
 	db, err = bolt.Open(dbfile, 0644, config)
-	if err != nil {
-		log.Println("Open db")
-		panic(err)
-	}
+	check(err)
 	open = true
 	return nil
 }
@@ -39,13 +36,9 @@ func (r *Recipe) AddRecipe() error {
 	}
 	err := db.Update(func(tx *bolt.Tx) error {
 		book, err := tx.CreateBucketIfNotExists([]byte("book"))
-		if err != nil {
-			log.Fatal(err)
-		}
-		enc, err := r.encode()
-		if err != nil {
-			log.Fatal(err)
-		}
+		check(err)
+		enc, err := json.Marshal(r)
+		check(err)
 		err = book.Put([]byte(r.Name), enc)
 		return err
 	})
@@ -61,7 +54,8 @@ func GetRecipe(id string) (*Recipe, error) {
 		var err error
 		b := tx.Bucket([]byte("book"))
 		k := []byte(id)
-		r, err = decode(b.Get(k))
+		err = json.Unmarshal(b.Get(k), &r)
+		// r, err = decode(b.Get(k))
 		if err != nil {
 			return err
 		}
@@ -76,7 +70,9 @@ func List() []Recipe {
 
 		book := tx.Bucket([]byte("book"))
 		if err := book.ForEach(func(k []byte, v []byte) error {
-			recipe, _ := decode(v)
+			var recipe *Recipe
+			err := json.Unmarshal(v, &recipe)
+			check(err)
 			recipes = append(recipes, *recipe)
 			return nil
 		}); err != nil {
@@ -91,26 +87,24 @@ func DeleteRecipe(id string) error {
 	err := db.Update(func(tx *bolt.Tx) error {
 		return tx.Bucket([]byte("book")).Delete([]byte(id))
 	})
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 	return nil
 }
 
 func UpdateTime(id, time string) error {
 	err := db.Update(func(tx *bolt.Tx) error {
 		var err error
+		var recipe *Recipe
 		book := tx.Bucket([]byte("book"))
-		recipe, err := decode(book.Get([]byte(id)))
+		err = json.Unmarshal(book.Get([]byte(id)), &recipe)
+		// recipe, err := decode(book.Get([]byte(id)))
 		if recipe == nil || err != nil {
-			log.Println("Unable to Update Time. Recipe not in book")
+			log.Println("Unable to Update Time. Check to make sure recipe is in book.")
 			return err
 		} else {
 			recipe.CookTime = time
-			newRecipe, err := recipe.encode()
-			if err != nil {
-				log.Fatal(err)
-			}
+			newRecipe, err := json.Marshal(recipe)
+			check(err)
 			err = book.Put([]byte(recipe.Name), newRecipe)
 		}
 		return err
@@ -118,20 +112,24 @@ func UpdateTime(id, time string) error {
 	return err
 }
 
-// Encode and decode json
-func (r *Recipe) encode() ([]byte, error) {
-	enc, err := json.Marshal(r)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return enc, nil
-}
-
-func decode(data []byte) (*Recipe, error) {
-	var r *Recipe
-	err := json.Unmarshal(data, &r)
-	if err != nil {
-		return nil, err
-	}
-	return r, nil
+func UpdateIngredientList(id string, ingredient Ingredient) error {
+	err := db.Update(func(tx *bolt.Tx) error {
+		var err error
+		var recipe *Recipe
+		book := tx.Bucket([]byte("book"))
+		err = json.Unmarshal(book.Get([]byte(id)), &recipe)
+		// recipe, err := decode(book.Get([]byte(id)))
+		if recipe == nil || err != nil {
+			log.Println("Unable to update ingredient list. Check to make sure recipe is in book.")
+			return err
+		} else {
+			recipe.IngredientList = append(recipe.IngredientList, ingredient)
+			log.Println(recipe)
+			newRecipe, err := json.Marshal(recipe)
+			check(err)
+			err = book.Put([]byte(recipe.Name), newRecipe)
+		}
+		return err
+	})
+	return err
 }

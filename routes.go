@@ -39,7 +39,7 @@ var routes = Routes{
 		RecipeDelete,
 	},
 	Route{
-		"RecipesUpdateTime",
+		"UpdateRecipeTime",
 		"POST",
 		"/recipes/update/time",
 		UpdateRecipeTime,

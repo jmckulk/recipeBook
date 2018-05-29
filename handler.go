@@ -7,12 +7,14 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "Welcome to Recipe Book!")
+	welcome := "Welcome to Recipe Book!"
+
+	indexT.Execute(w, welcome)
 }
 
 func RecipesIndex(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +25,7 @@ func RecipesIndex(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Recipe book is empty.")
 	} else {
 		for _, recipe := range recipes {
-			fmt.Fprintln(w, "Recipe: ", recipe.Name, "\tCook Time: ", recipe.CookTime)
+			fmt.Fprintln(w, "Recipe: ", recipe.Name, "\tCook Time: ", recipe.CookTime, "\tIngredients: ", recipe.IngredientList)
 		}
 	}
 }
@@ -31,13 +33,11 @@ func RecipesIndex(w http.ResponseWriter, r *http.Request) {
 func RecipeCreate(w http.ResponseWriter, r *http.Request) {
 	var recipe *Recipe
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 	if err := r.Body.Close(); err != nil {
 		log.Fatal(err)
 	}
-	recipe, err = decode(body)
+	err = json.Unmarshal(body, &recipe)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
@@ -55,13 +55,11 @@ func RecipeCreate(w http.ResponseWriter, r *http.Request) {
 func RecipeDelete(w http.ResponseWriter, r *http.Request) {
 	var recipe *Recipe
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 	if err := r.Body.Close(); err != nil {
 		log.Fatal(err)
 	}
-	recipe, err = decode(body)
+	err = json.Unmarshal(body, &recipe)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
@@ -80,13 +78,11 @@ func RecipeDelete(w http.ResponseWriter, r *http.Request) {
 func UpdateRecipeTime(w http.ResponseWriter, r *http.Request) {
 	var recipe *Recipe
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 	if err := r.Body.Close(); err != nil {
 		log.Fatal(err)
 	}
-	recipe, err = decode(body)
+	err = json.Unmarshal(body, &recipe)
 	if recipe.CookTime == "" || recipe.Name == "" {
 		log.Println("Need a time and recipe name to update recipe.")
 	} else {
@@ -98,10 +94,16 @@ func UpdateRecipeTime(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		err = UpdateTime(recipe.Name, recipe.CookTime)
-		if err != nil {
-			log.Println(err)
-		}
+		check(err)
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+}
+
+func UpdateIngredients(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["recipeId"]
+	ingredient := Ingredient(vars["ingredient"])
+	UpdateIngredientList(id, ingredient)
+	// Index(w, r)
 }
