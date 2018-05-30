@@ -12,14 +12,12 @@ import (
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	welcome := "Welcome to Recipe Book!"
+	message := "Welcome to Recipe Book!"
 
-	indexT.Execute(w, welcome)
+	indexT.Execute(w, message)
 }
 
 func RecipesIndex(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	// w.WriteHeader(http.StatusOK)
 	recipes := List()
 	recipeBook := struct {
 		Book string
@@ -29,35 +27,19 @@ func RecipesIndex(w http.ResponseWriter, r *http.Request) {
 		List: recipes,
 	}
 	listT.Execute(w, recipeBook)
-	// if recipes == nil {
-	// 	fmt.Fprintln(w, "Recipe book is empty.")
-	// } else {
-	// 	for _, recipe := range recipes {
-	// 		fmt.Fprintln(w, "Recipe: ", recipe.Name, "\tCook Time: ", recipe.CookTime, "\tIngredients: ", recipe.IngredientList)
-	// 	}
-	// }
 }
 
 func RecipeCreate(w http.ResponseWriter, r *http.Request) {
-	var recipe *Recipe
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	check(err)
-	if err := r.Body.Close(); err != nil {
-		log.Fatal(err)
+	recipe := Recipe{
+		Name:     r.FormValue("name"),
+		CookTime: r.FormValue("cooktime"),
 	}
-	err = json.Unmarshal(body, &recipe)
-	if err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, recipe)
 	recipe.AddRecipe()
+	RecipesIndex(w, r)
+}
+
+func RecipeCreateForm(w http.ResponseWriter, r *http.Request) {
+	createT.Execute(w, nil)
 }
 
 func RecipeDelete(w http.ResponseWriter, r *http.Request) {
@@ -111,7 +93,10 @@ func UpdateRecipeTime(w http.ResponseWriter, r *http.Request) {
 func UpdateIngredients(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["recipeId"]
-	ingredient := Ingredient(vars["ingredient"])
+	ingredient := Ingredient{
+		Name:   vars["ingredient"],
+		Amount: "0 Cups",
+	}
 	UpdateIngredientList(id, ingredient)
 	// Index(w, r)
 }

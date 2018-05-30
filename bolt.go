@@ -67,17 +67,19 @@ func GetRecipe(id string) (*Recipe, error) {
 func List() []Recipe {
 	var recipes []Recipe
 	db.View(func(tx *bolt.Tx) error {
-
 		book := tx.Bucket([]byte("book"))
-		if err := book.ForEach(func(k []byte, v []byte) error {
+		if book == nil {
+			return nil
+		}
+		var err error
+		err = book.ForEach(func(k []byte, v []byte) error {
 			var recipe *Recipe
 			err := json.Unmarshal(v, &recipe)
 			check(err)
 			recipes = append(recipes, *recipe)
 			return nil
-		}); err != nil {
-			log.Fatal(err)
-		}
+		})
+		check(err)
 		return nil
 	})
 	return recipes

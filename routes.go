@@ -28,6 +28,12 @@ var routes = Routes{
 	},
 	Route{
 		"RecipesCreate",
+		"GET",
+		"/recipes/createform",
+		RecipeCreateForm,
+	},
+	Route{
+		"RecipesCreate",
 		"POST",
 		"/recipes/create",
 		RecipeCreate,
