@@ -98,5 +98,5 @@ func UpdateIngredients(w http.ResponseWriter, r *http.Request) {
 		Amount: "0 Cups",
 	}
 	UpdateIngredientList(id, ingredient)
-	// Index(w, r)
+	RecipesIndex(w, r)
 }
