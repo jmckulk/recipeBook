@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// TODO: See if I can remove the method from the router and add it to the api function
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {

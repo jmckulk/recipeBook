@@ -1,0 +1,40 @@
+<head>
+<style>
+table, th, td {
+  border: 1px solid #dddddd;
+}
+th, td {
+  padding: 5px;
+}
+td {
+  text-align: center;
+}
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+  <h1>{{.Name}}</h1>
+  <div>Cook Time: {{.CookTime}}</div>
+  <div>Rating: {{.Rating}}</div>
+  </br>
+  <table>
+    <caption><b>Ingredients:</b></caption>
+    <tr>
+      <th>Name</th>
+      <th>Amount</th>
+    </tr>
+    {{range .IngredientList}}
+    <tr>
+      <td>{{.Name}}</td>
+      <td>{{.Amount}}</td>
+    </tr>
+    {{end}}
+  </table>
+  </br>
+  <form action="http://localhost:8080/recipes/delete/{{.Name}}" method="POST">
+    <input type="submit" value="Delete"/>
+  </form>
+  <form action="http://localhost:8080/recipes/createform"
+</body>

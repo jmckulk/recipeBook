@@ -126,7 +126,6 @@ func UpdateIngredientList(id string, ingredient Ingredient) error {
 			return err
 		} else {
 			recipe.IngredientList = append(recipe.IngredientList, ingredient)
-			log.Println(recipe)
 			newRecipe, err := json.Marshal(recipe)
 			check(err)
 			err = book.Put([]byte(recipe.Name), newRecipe)

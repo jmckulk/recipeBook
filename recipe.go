@@ -13,3 +13,6 @@ type Ingredient struct {
 }
 
 type Recipes []Recipe
+
+// TODO: allow users to rate recipes on scale from 1-5. take the sum
+//	and average of the ratings and assign to the recipe

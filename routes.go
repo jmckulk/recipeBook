@@ -39,15 +39,21 @@ var routes = Routes{
 		RecipeCreate,
 	},
 	Route{
-		"RecipesDelete",
-		"POST",
-		"/recipes/delete",
-		RecipeDelete,
+		"Recipes",
+		"GET",
+		"/recipes/{recipeId}",
+		RecipeShow,
 	},
 	Route{
-		"UpdateRecipeTime",
+		"RecipesDelete",
 		"POST",
-		"/recipes/update/time",
-		UpdateRecipeTime,
+		"/recipes/delete/{recipeId}",
+		RecipeDelete,
 	},
+	// Route{
+	// 	"UpdateRecipeTime",
+	// 	"POST",
+	// 	"/recipes/update/time",
+	// 	UpdateRecipeTime,
+	// },
 }

@@ -17,7 +17,6 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-
 	err = InitTemplates()
 	check(err)
 	Open()
