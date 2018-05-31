@@ -33,8 +33,13 @@ tr:nth-child(even) {
     {{end}}
   </table>
   </br>
-  <form action="http://localhost:8080/recipes/delete/{{.Name}}" method="POST">
+  <form action="/recipes/delete/{{.Name}}" method="POST">
     <input type="submit" value="Delete"/>
   </form>
-  <form action="http://localhost:8080/recipes/createform"
+  <form action="/recipes/createform" method="GET">
+    <input type="submit" value="Update"/>
+  </form>
+  <form action="/" method="GET">
+    <input type="submit" value="HOME"/>
+  </form>
 </body>
