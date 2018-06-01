@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"path"
-	"runtime"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -16,10 +14,11 @@ var open bool
 
 func Open() error {
 	var err error
-	_, filename, _, _ := runtime.Caller(0)
-	dbfile := path.Join(path.Dir(filename), "RecipeBook.db")
+	// _, filename, _, _ := runtime.Caller(0)
+	// dbfile := path.Join(path.Dir(filename), "RecipeBook.db")
 	config := &bolt.Options{Timeout: 1 * time.Second}
-	db, err = bolt.Open(dbfile, 0644, config)
+	// db, err = bolt.Open(dbfile, 0644, config)
+	db, err = bolt.Open("/tmp/RecipeBook.db", 0644, config)
 	check(err)
 	open = true
 	return nil
