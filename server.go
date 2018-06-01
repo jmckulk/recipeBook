@@ -13,7 +13,8 @@ var t *template.Template
 var check func(error)
 
 const (
-	DEFAULT_DB = "bolt"
+	DEFAULT_DB   = "bolt"
+	DEFAULT_PORT = "8080"
 )
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
 
 	router := NewRouter()
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":"+getPort(), router))
 
 	CloseDB(getDB())
 }
@@ -59,4 +60,12 @@ func getDB() string {
 		db = DEFAULT_DB
 	}
 	return db
+}
+
+func getPort() string {
+	port := os.Getenv("PORT")
+	if len(port) == 0 {
+		port = DEFAULT_PORT
+	}
+	return port
 }
