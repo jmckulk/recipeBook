@@ -1,9 +1,13 @@
+
 <body>
+  <form action="/">
+    <input type="submit" value="Home"/>
+  </form>
   <form action="/recipes/create" method="POST">
     Recipe name:<br>
-    <input type="text" name="name"><br>
+    <input type="text" name="name" value={{.Name}}><br>
     Cook Time:<br>
-    <input type="text" name="cooktime"><br>
+    <input type="text" name="cooktime" value={{.CookTime}}><br>
     Ingredients:<br>
     <input type="text" name="ingredients"><br>
     <input type="submit" value="Submit">

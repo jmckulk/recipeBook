@@ -36,7 +36,7 @@ tr:nth-child(even) {
   <form action="/recipes/delete/{{.Name}}" method="POST">
     <input type="submit" value="Delete"/>
   </form>
-  <form action="/recipes/createform" method="GET">
+  <form action="/recipes/create/{{.Name}}" method="GET">
     <input type="submit" value="Update"/>
   </form>
   <form action="/" method="GET">

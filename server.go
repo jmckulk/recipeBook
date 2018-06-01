@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// TODO: Binary build pack
 // var db *bolt.DB
 var t *template.Template
 var check func(error)
@@ -25,11 +26,6 @@ func main() {
 	err = InitTemplates()
 	check(err)
 	CreateDB(getDB())
-	// r := &Recipe{Name: "Pork", CookTime: "30 min"}
-	// r.AddRecipe()
-	// UpdateTime("Pork", "60 min")
-	// UpdateIngredientList("Pork", "Sauce")
-	// UpdateIngredientList("Pork", "Meat")
 
 	router := NewRouter()
 
@@ -41,7 +37,8 @@ func main() {
 func CreateDB(db string) {
 	switch db {
 	case "bolt":
-		log.Println("bolt")
+		Open()
+		// log.Println("bolt")
 	default:
 		log.Println("pg")
 	}
@@ -50,8 +47,8 @@ func CreateDB(db string) {
 func CloseDB(db string) {
 	switch db {
 	case "bolt":
-		// Close()
-		log.Println("bolt")
+		Close()
+		// log.Println("bolt")
 	default:
 		log.Println("pg")
 	}

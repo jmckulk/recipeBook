@@ -30,26 +30,35 @@ func RecipesIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func RecipeCreate(w http.ResponseWriter, r *http.Request) {
-	recipe := Recipe{
-		Name:     r.FormValue("name"),
-		CookTime: r.FormValue("cooktime"),
-	}
-	recipe.AddRecipe()
-	data := r.FormValue("ingredients")
-	ingredients := strings.Split(data, ",")
-	for _, ingredient := range ingredients {
-		newIngredient := Ingredient{
-			Name:   ingredient,
-			Amount: "0 Cups",
+	if r.Method == "POST" {
+		recipe := Recipe{
+			Name:     r.FormValue("name"),
+			CookTime: r.FormValue("cooktime"),
 		}
-		UpdateIngredientList(recipe.Name, newIngredient)
+		recipe.AddRecipe()
+		data := r.FormValue("ingredients")
+		ingredients := strings.Split(data, ",")
+		for _, ingredient := range ingredients {
+			newIngredient := Ingredient{
+				Name:   ingredient,
+				Amount: "0 Cups",
+			}
+			UpdateIngredientList(recipe.Name, newIngredient)
+		}
+		http.Redirect(w, r, "/recipes", http.StatusFound)
+	} else {
+		vars := mux.Vars(r)
+		id := vars["recipeId"]
+		if id != "" {
+			recipe, err := GetRecipe(id)
+			if err != nil {
+				panic(err)
+			}
+			createT.Execute(w, recipe)
+		} else {
+			createT.Execute(w, nil)
+		}
 	}
-	// TODO: Add redirect to recipe page
-	RecipesIndex(w, r)
-}
-
-func RecipeCreateForm(w http.ResponseWriter, r *http.Request) {
-	createT.Execute(w, nil)
 }
 
 func RecipeShow(w http.ResponseWriter, r *http.Request) {
@@ -66,8 +75,7 @@ func RecipeDelete(w http.ResponseWriter, r *http.Request) {
 	if err := DeleteRecipe(id); err != nil {
 		log.Fatal(err)
 	}
-
-	RecipesIndex(w, r)
+	http.Redirect(w, r, "/recipes", http.StatusFound)
 	// var recipe *Recipe
 	// body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	// check(err)
@@ -123,5 +131,5 @@ func RecipeDelete(w http.ResponseWriter, r *http.Request) {
 // 		Amount: "0 Cups",
 // 	}
 // 	UpdateIngredientList(id, ingredient)
-// 	RecipesIndex(w, r)
+// 	http.Redirect(w, r, "/recipes", http.StatusFound)
 // }
