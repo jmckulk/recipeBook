@@ -1,0 +1,10 @@
+---
+applications:
+  - name: recipe-book
+    memory: 1GB
+    disk_quota: 1GB
+    buildpack: go_buildpack
+    env:
+      GOVERSION: go1.8
+      GOPACKAGENAME: recipe-book
+      DEFAULT_DB: pgsql
