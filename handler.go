@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -36,15 +35,15 @@ func RecipeCreate(w http.ResponseWriter, r *http.Request) {
 			CookTime: r.FormValue("cooktime"),
 		}
 		recipe.AddRecipe()
-		data := r.FormValue("ingredients")
-		ingredients := strings.Split(data, ",")
-		for _, ingredient := range ingredients {
-			newIngredient := Ingredient{
-				Name:   ingredient,
-				Amount: "0 Cups",
-			}
-			UpdateIngredientList(recipe.Name, newIngredient)
-		}
+		// data := r.FormValue("ingredients")
+		// ingredients := strings.Split(data, ",")
+		// for _, ingredient := range ingredients {
+		// 	newIngredient := Ingredient{
+		// 		Name:   ingredient,
+		// 		Amount: "0 Cups",
+		// 	}
+		// 	UpdateIngredientList(recipe.Name, newIngredient)
+		// }
 		http.Redirect(w, r, "/recipes", http.StatusFound)
 	} else {
 		vars := mux.Vars(r)

@@ -13,7 +13,7 @@ var t *template.Template
 var check func(error)
 
 const (
-	DEFAULT_DB   = "bolt"
+	DEFAULT_DB   = "pg"
 	DEFAULT_PORT = "8080"
 )
 
@@ -26,8 +26,13 @@ func main() {
 	}
 	err = InitTemplates()
 	check(err)
-	CreateDB(getDB())
-
+	OpenDB(getDB())
+	// recipe := Recipe{
+	// 	Name:     "Pork",
+	// 	CookTime: "30 min",
+	// 	Rating:   5,
+	// }
+	// recipe.AddRecipe()
 	router := NewRouter()
 
 	log.Fatal(http.ListenAndServe(":"+getPort(), router))
@@ -35,25 +40,68 @@ func main() {
 	CloseDB(getDB())
 }
 
-func CreateDB(db string) {
+func OpenDB(db string) {
 	switch db {
 	case "bolt":
-		Open()
-		// log.Println("bolt")
-	default:
-		log.Println("pg")
+		OpenBolt()
+	case "pg":
+		OpenPG()
 	}
 }
 
 func CloseDB(db string) {
 	switch db {
 	case "bolt":
-		Close()
-		// log.Println("bolt")
+		CloseBolt()
+	case "pg":
+		ClosePG()
 	default:
-		log.Println("pg")
+		log.Fatal("Invalid DB")
 	}
 }
+
+func (r *Recipe) AddRecipe() {
+	switch getDB() {
+	case "bolt":
+		r.AddRecipeBolt()
+	case "pg":
+		r.AddRecipePG()
+	}
+}
+
+func GetRecipe(id string) (*Recipe, error) {
+	switch getDB() {
+	case "bolt":
+		return GetRecipeBolt(id)
+	case "pg":
+		return GetRecipePG(id)
+	default:
+		return nil, nil
+	}
+}
+
+func List() []Recipe {
+	switch getDB() {
+	case "bolt":
+		return ListBolt()
+	case "pg":
+		return ListPG()
+	default:
+		return nil
+	}
+}
+
+func DeleteRecipe(id string) error {
+	switch getDB() {
+	case "bolt":
+		return DeleteRecipeBolt(id)
+	case "pg":
+		return DeleteRecipePG(id)
+	default:
+		return nil
+	}
+}
+
 func getDB() string {
 	var db string
 	if db = os.Getenv("DATABASE"); len(db) == 0 {
